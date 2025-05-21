@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Advanced Lesson Planner AI</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4A90E2; /* Gemini-like blue */
+            color: white;
+            padding: 15px 25px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 300px;
+            min-width: 280px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 1.4em;
+            color: #4A90E2;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .sidebar label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .sidebar input[type="text"],
+        .sidebar input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        .api-key-info {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 95%; /* Allow AI messages to be wider for tables */
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background-color: #dcf8c6;
+            color: #333;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-message {
+            background-color: #e9e9eb;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        /* Styling for rendered HTML from AI */
+        .ai-message-content h1,
+        .ai-message-content h2,
+        .ai-message-content h3,
+        .ai-message-content h4,
+        .ai-message-content h5,
+        .ai-message-content h6 {
+            color: #3A7BC8;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        .ai-message-content h1 { font-size: 1.5em; }
+        .ai-message-content h2 { font-size: 1.3em; }
+        .ai-message-content h3 { font-size: 1.15em; }
+        .ai-message-content p {
+            margin-bottom: 10px;
+        }
+        .ai-message-content ul,
+        .ai-message-content ol {
+            margin-left: 25px;
+            margin-bottom: 10px;
+        }
+        .ai-message-content li {
+            margin-bottom: 5px;
+        }
+        .ai-message-content strong {
+            font-weight: 600;
+        }
+        .ai-message-content em {
+            font-style: italic;
+        }
+        .ai-message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .ai-message-content th,
+        .ai-message-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: right; /* Default to right for Arabic, can be overridden */
+        }
+        .ai-message-content th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #4A90E2;
+        }
+        .ai-message-content td > p { /* Reset margin for <p> inside <td> if any */
+            margin-bottom: 0;
+        }
+        /* Loading animation */
+        .ai-message .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #888;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .ai-message .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .ai-message .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
+        }
+
+        .chat-input-area button {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1; /* Make button take available space */
+        }
+        .chat-input-area button:disabled {
+            background-color: #a0c7ef;
+            cursor: not-allowed;
+        }
+        .chat-input-area button:hover:not(:disabled) {
+            background-color: #3A7BC8;
+        }
+
+        .initial-placeholder {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 1.2em;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-bottom: 20px;
+                max-height: 40vh;
+            }
+            .chat-area {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body dir="rtl"> <!-- Set overall direction to RTL for Arabic content -->
+
+    <header>
+        <h1>مُخطِّط الدروس الذكي للمعلمين</h1>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>إعدادات الدرس</h2>
+            <form id="lessonDetailsForm">
+                <div>
+                    <label for="classGrade">الصف الدراسي:</label>
+                    <input type="text" id="classGrade" name="classGrade" placeholder="مثال: الصف الثالث الابتدائي" required>
+                </div>
+                <div>
+                    <label for="subject">المادة:</label>
+                    <input type="text" id="subject" name="subject" placeholder="مثال: اللغة العربية" required>
+                </div>
+                <div>
+                    <label for="lessonName">عنوان/موضوع الدرس:</label>
+                    <input type="text" id="lessonName" name="lessonName" placeholder="مثال: الأعداد ١، ٢، ٣" required>
+                </div>
+            </form>
+            <div class="api-key-info">
+                <p><strong>تنبيه:</strong> مفتاح الواجهة البرمجية (API Key) مُضمَّن في الكود. هذا مناسب للاستخدام الشخصي المحلي فقط. لا تشارك هذا الملف مع مفتاحك الخاص.</p>
+            </div>
+        </aside>
+
+        <main class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="initial-placeholder">
+                    املأ تفاصيل الدرس في الشريط الجانبي، ثم اضغط على زر "إرسال" لإنشاء خطة الدرس.
+                </div>
+            </div>
+            <form id="chatForm" class="chat-input-area">
+                <button type="submit" id="sendButton">إرسال</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        // --- CONFIGURATION: REPLACE WITH YOUR ACTUAL GEMINI API KEY ---
+        // IMPORTANT! Replace the placeholder string below with your actual Gemini API Key.
+        // For example, if your key is "ABC123XYZ", the line should look like:
+        // const API_KEY = "ABC123XYZ";
+        const API_KEY = "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc"; // <--- REPLACE THIS VALUE!
+        // --- END CONFIGURATION ---
+
+        const AI_INSTRUCTIONS = `
+You are an expert curriculum designer AI specializing in creating detailed lesson plans for teachers, particularly in Arabic.
+Your task is to generate a comprehensive and practical lesson plan based on the user's request (class grade, subject, lesson topic, and specific requirements).
+
+**Output Format:**
+*   Provide ONLY the lesson plan content, formatted in Arabic.
+*   Do NOT include any conversational introductory or concluding phrases like "Here is your lesson plan:", "Certainly!", or "I hope this helps!".
+*   Format your response using Markdown-like syntax. Use headings (#, ##, ###), bullet points (* or -), bold (**text**), and italics (*text*). Tables should be formatted using Markdown table syntax (as shown in the example).
+
+**Lesson Plan Structure (Barā‘ah Model - نموذج براعة):**
+The lesson plan should generally include the following sections, adapted as needed for the specific request. Pay close attention to the structure and column order in the "الجدول التحضيري" of the example:
+1.  **عنوان الدرس:** (Derived from user input)
+2.  **الصف:** (Derived from user input)
+3.  **المادة:** (Derived from user input)
+4.  **الزمن الكلي المقترح:** (If specified by user, otherwise suggest a common duration like 45-60 minutes and break it down per activity)
+5.  **الأهداف التعليمية/السلوكية:** (What students will know or be able to do. Use action verbs, e.g., "أن يُميز الطالب...", "أن يَصف الطالب...")
+6.  **المواد والأدوات والوسائل التعليمية:** (List all necessary items, including technology, handouts, fixed resources like whiteboards, and variable resources like videos or specific objects.)
+7.  **إجراءات سير الدرس (مع تحديد الزمن لكل نشاط):**
+    *   **التمهيد (Warm-up/Engagement):** How to start the lesson and capture student interest. Include introductory questions.
+    *   **الجدول التحضيري (Preparatory Table / Main Activities Table):** This is a key part. Present this as a Markdown table with columns in this specific order: المحتوى (Content), المجال (Domain), المستوى (Level), صياغة الهدف (Objective Formulation), مصادر التعلم (Learning Resources), الزمن (Time), دور المعلم (Teacher's Role), دور المتعلم (Student's Role).
+    *   **الإغلاق (Wrap-up/Closure):** Summary, check for understanding, review activities, and possibly preview next lesson.
+8.  **التقويم:** (How learning will be checked - formative and/or summative activities or questions).
+9.  **مراعاة الفروق الفردية (Differentiation):** (Strategies for diverse learners, if applicable).
+10. **أوراق عمل وأنشطة إثرائية/داعمة (Worksheets and Supporting/Enrichment Activities - Optional but good):** Suggest relevant worksheets or activities, possibly in a table format.
+11. **ملاحظات (Notes - Optional):** Any additional important notes for the teacher.
+
+**VERY IMPORTANT EXAMPLE TO FOLLOW FOR STRUCTURE, DETAIL, AND STYLE (نموذج براعة مقلوب - Flipped Barā‘ah Model):**
+
+Below is an exemplary lesson plan for a lesson on "الحمام" (Pigeons). Use this as a strong guide for how to structure the output, the level of detail expected in each section, and the Markdown formatting, especially for the "الجدول التحضيري". The user will provide a different topic, grade, and subject. You need to adapt this example's structure to their new request.
+
+--- EXAMPLE LESSON PLAN ---
+
+### **درس: الحمام**
+
+### **التمهيد (5 دقائق):**
+- **عرض فيديو قصير** أو صورة ملونة لطائر الحمام.
+- **الأسئلة التمهيدية:**
+  - "هل رأيتم هذا الطائر من قبل؟ ماذا يسمى؟ ماذا تعرفون عنه؟"
+  - "هل تريدون معرفة المزيد عن الحمام؟" (نقل الطلاب إلى محتوى الدرس).
+
+### **الجدول التحضيري (8 أعمدة × 4 صفوف)**
+*   **عكس الأعمدة:**
+    *   يبدأ الجدول بـ **"المحتوى"** كأول عمود (بدلًا من "دور المتعلم") لينتقل تركيز التخطيط من **دور الطالب** إلى **المحتوى التعليمي** أولًا، ثم يصل إلى الأدوار.
+*   **التسلسل المنطقي:**
+    *   أصبح التسلسل: **المحتوى → المجال → المستوى → الهدف → المصادر → الزمن → دور المعلم → دور المتعلم**، مما يُسهل على المعلم الربط بين المحتوى والأدوات قبل التخطيط للأنشطة.
+*   **وضوح الرؤية:**
+    *   يرى المعلم المحتوى والأهداف أولًا في الجدول، مما يساعده على اختيار الاستراتيجيات المناسبة (مثل: إذا كان المحتوى تحليليًّا، سيختار أسئلة نقدية).
+
+| **دور المتعلم**       | **دور المعلم**                          | **الزمن** | **مصادر التعلم**                        | **صياغة الهدف**                              | **المستوى** | **المجال**  | **المحتوى**                                                                 |
+|-------------------------|------------------------------------------|-----------|------------------------------------------|-----------------------------------------------|-------------|-------------|-----------------------------------------------------------------------------|
+| يستمع – يشاهد – يسأل   | استخدام أسلوب الاستكشاف – طرح أسئلة مفتوحة | 8 د       | ثابتة: سبورة – كتاب <br> متغيرة: فيديو – صور | أن يُميز الطالب شكل طائر الحمام وأماكن تواجده | فهم         | معرفي      | المفاهيم: شكل الحمام – البيئة التي يعيش فيها – غذاؤه                      |
+| يشارك – يلاحظ – يناقش  | استخدام التعلم التعاوني – تنظيم مجموعات  | 10 د      | ثابتة: سبورة – كتاب <br> متغيرة: بطاقات – مجسم | أن يَصف الطالب خصائص الحمام وصفاته الفيزيائية | تطبيق      | مهاري      | الممارسة: مقارنة الحمام بطيور أخرى – وصف أجزائه (رأس، جناح، ريش...)       |
+| يفكر – يعبر – يعيد الصياغة | استخدام المناقشة الجماعية – تحفيز التفكير | 7 د       | ثابتة: سبورة – دفتر <br> متغيرة: رسم بياني – بطاقات | أن يُعبر الطالب عن أهمية الحمام في البيئة والحياة | تحليل      | وجداني     | التحليل: دور الحمام في الطبيعة – استخداماته للإنسان                       |
+| يُصنف – يختار – يُقيّم  | استخدام التعلم باللعب – تقويم أدائي       | 5 د       | ثابتة: بطاقات – سبورة <br> متغيرة: لعبة تصنيف | أن يُصنف الطالب الحمام ككائن حي فقاري يعيش في بيئات مختلفة | تقييم      | معرفي      | التمييز: الكائنات الحية – الفقاريات – الطيور                                |
+
+### **الإغلاق (10 دقائق):**
+1.  **مراجعة سريعة:**
+    - سؤال شفهي: "ما الذي تعلمته عن الحمام اليوم؟"
+2.  **نشاط جسمي:**
+    - تقليد حركة الحمام بالطيران باستخدام الأذرع.
+3.  **لعبة "صح أم خطأ":**
+    - جمل مثل:
+      - الحمام من الزواحف. (✖)
+      - للحمام جناحان وريش. (✔)
+      - الحمام يعيش تحت الماء. (✖)
+    - رفع بطاقات "صح" أو "خطأ".
+
+### **أوراق عمل وأنشطة داعمة:**
+| **النشاط**                  | **التفاصيل**                                                                 |
+|-----------------------------|------------------------------------------------------------------------------|
+| **ورقة عمل 1:** صل الصورة بالكلمة | صور (حمام، سمك، قط، حمامة) مع كلمات مطابقة.                                |
+| **ورقة عمل 2:** أكتب جملة   | صورة حمامة مع جملة مثل: "الحمامة تطير في السماء."                          |
+| **ورقة عمل 3:** ضع دائرة    | صور (حمامة، سيارة، طائرة، عصفور) – وضع دائرة على الكائن الحي الطائر.       |
+| **نشاط جماعي:** لعبة التصنيف | بطاقات صور (طيور، حيوانات، أشياء) – تصنيف الصور التي تمثل "طيورًا".        |
+
+**ملاحظات:**
+- تعزيز التفاعل عبر الأنشطة الحركية والمرئية.
+- مراعاة الفروق الفردية بتقديم أنشطة متنوعة (سمعية، بصرية، حركية).
+- استخدام التعلم باللعب لترسيخ المفاهيم العلمية (مثل لعبة التصنيف).
+
+--- END OF EXAMPLE LESSON PLAN ---
+
+Now, based on the user's specific inputs for grade, subject, topic, and their detailed request, generate a new lesson plan in Arabic, following this structure and style.
+The user might provide input like:
+الصف "الأول الابتدائي"
+المادة "اللغة العربية"
+المحتوى الاساسي "تعريف الأعداد ١، ٢، ٣، شكلها، وكيفية كتابتها، وربطها بأشياء محسوسة"
+تحضير درس "الأعداد ١، ٢، ٣"
+
+Your generated lesson plan should take these inputs and the user's free-form request to create a new plan.
+`;
+
+        const chatForm = document.getElementById('chatForm');
+        const chatMessages = document.getElementById('chatMessages');
+        const initialPlaceholder = document.querySelector('.initial-placeholder');
+        const sendButton = document.getElementById('sendButton');
+        
+        chatForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userMessageText = ""; 
+
+            const classGrade = document.getElementById('classGrade').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const lessonName = document.getElementById('lessonName').value.trim();
+            
+
+            if (!classGrade || !subject || !lessonName) {
+                alert('الرجاء ملء حقول الصف الدراسي، المادة، وعنوان الدرس.');
+                return;
+            }
+
+            if (initialPlaceholder) {
+                initialPlaceholder.style.display = 'none';
+            }
+
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+
+            const loadingMessageElement = appendMessage('', 'ai-message', true);
+            loadingMessageElement.innerHTML = '<div class="ai-message-content" style="text-align: center;"><p>جارٍ إنشاء خطة الدرس...</p><div class="loading-dots"><span></span><span></span><span></span></div></div>';
+
+            try {
+                const aiResponseText = await getAIResponse(userMessageText, classGrade, subject, lessonName, AI_INSTRUCTIONS, API_KEY);
+                loadingMessageElement.innerHTML = ''; 
+                renderAIResponseAsHTML(aiResponseText, loadingMessageElement);
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+                loadingMessageElement.innerHTML = '';
+                renderAIResponseAsHTML(`خطأ: تعذر إنشاء خطة الدرس. ${error.message}`, loadingMessageElement, true);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.innerHTML = 'إرسال';
+            }
+        });
+
+        function appendMessage(textOrHtml, className, isHTML = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', className);
+            if (isHTML) {
+                messageElement.innerHTML = textOrHtml;
+            } else {
+                messageElement.textContent = textOrHtml;
+            }
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return messageElement;
+        }
+
+        async function getAIResponse(userPrompt, grade, subject, topic, instructions, apiKey) {
+            const AI_API_ENDPOINT_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest';
+            const AI_API_ENDPOINT = `${AI_API_ENDPOINT_BASE}:generateContent`;
+
+
+
+            const fullPrompt = `
+${instructions}
+
+CONTEXT FOR LESSON PLAN (provided by user via form fields):
+Class Grade: ${grade}
+Subject: ${subject}
+Lesson Topic/Title: ${topic}
+
+USER'S SPECIFIC REQUEST FOR THE LESSON PLAN (from chat input, if any):
+${userPrompt} 
+
+Generate the lesson plan in Arabic now based on all the above information and the detailed example provided in the instructions.
+Ensure the output is ONLY the lesson plan content, in Markdown, ready for rendering.
+`;
+            
+            const geminiRequestBody = {
+              "contents": [{
+                "parts": [{"text": fullPrompt}]
+              }],
+              "generationConfig": {
+                "temperature": 0.6,
+                "maxOutputTokens": 4096, 
+                "candidateCount": 1
+              },
+            };
+
+            console.log("Sending to Gemini AI. Review request body structure if issues arise.");
+
+            const response = await fetch(`${AI_API_ENDPOINT}?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(geminiRequestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                console.error("API Error Data:", errorData);
+                let errorMessage = `فشل طلب الواجهة البرمجية: ${response.status}`;
+                if (errorData && errorData.error && errorData.error.message) {
+                    errorMessage += ` - ${errorData.error.message}`;
+                } else if (errorData && errorData.message) { 
+                    errorMessage += ` - ${errorData.message}`;
+                } else {
+                    errorMessage += ` - ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) {
+                 return data.candidates[0].content.parts[0].text.trim();
+            } else if (data.promptFeedback && data.promptFeedback.blockReason) {
+                 console.error("Prompt blocked by API:", data.promptFeedback);
+                 let blockDetail = "";
+                 if(data.promptFeedback.safetyRatings && data.promptFeedback.safetyRatings.length > 0){
+                    blockDetail = data.promptFeedback.safetyRatings.map(r => `${r.category}: ${r.probability}`).join(', ');
+                 }
+                 throw new Error(`تم حظر الطلب بواسطة الواجهة البرمجية بسبب "${data.promptFeedback.blockReason}". ${blockDetail ? 'التفاصيل: ' + blockDetail : ''}`);
+            }
+            else {
+                console.warn("AI response format not recognized or empty, dumping data:", data);
+                 if (data.error && data.error.message) { 
+                    throw new Error(`خطأ في استجابة الواجهة البرمجية: ${data.error.message}`);
+                }
+                throw new Error("تنسيق استجابة الذكاء الاصطناعي غير معروف أو فارغ. تحقق من وحدة التحكم للحصول على التفاصيل.");
+            }
+        }
+        
+        function renderAIResponseAsHTML(markdownText, messageElement, isError = false) {
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('ai-message-content');
+            contentDiv.setAttribute('dir', 'rtl'); 
+
+            if (isError) {
+                const p = document.createElement('p');
+                p.style.color = 'red';
+                p.textContent = markdownText;
+                contentDiv.appendChild(p);
+                messageElement.appendChild(contentDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return;
+            }
+
+            let htmlContent = '';
+            let inList = null; 
+            let inTable = false;
+            let tableHeaderParsed = false; 
+
+            const lines = markdownText.split('\n');
+
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+
+                if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
+                    if (!inTable) {
+                        htmlContent += '<table>';
+                        inTable = true;
+                        tableHeaderParsed = false; 
+                    }
+                    const cells = trimmedLine.slice(1, -1).split('|').map(cell => cell.trim());
+                    
+                    if (!tableHeaderParsed && cells.every(cell => cell.replace(/-/g, '').trim() === '')) {
+                        tableHeaderParsed = true; 
+                        return; 
+                    }
+
+                    htmlContent += '<tr>';
+                    cells.forEach((cell) => {
+                        const cellContent = applyInlineFormatting(cell); 
+                        if (!tableHeaderParsed) { 
+                            htmlContent += `<th>${cellContent}</th>`;
+                        } else { 
+                            htmlContent += `<td>${cellContent}</td>`;
+                        }
+                    });
+                    htmlContent += '</tr>';
+                    
+                    if (!tableHeaderParsed && !cells.every(cell => cell.replace(/-/g, '').trim() === '')) {
+                        // If this first row was not a separator, assume it was the header.
+                        // For subsequent rows to be <td>, tableHeaderParsed needs to be true.
+                        // However, the logic relies on *explicitly* finding the separator.
+                        // If no separator is found, all rows might become <th> if this isn't set.
+                        // This is a bit tricky; best practice is for AI to provide the separator.
+                        // For now, if AI doesn't provide separator, first row is <th>, subsequent are also <th>
+                        // unless we uncomment: tableHeaderParsed = true; 
+                        // But this means a single-row table without separator will have its single row as header.
+                        // The prompt strongly asks AI to follow example with separator.
+                    }
+                    return; 
+                } else if (inTable) { 
+                    htmlContent += '</table>';
+                    inTable = false;
+                    tableHeaderParsed = false; 
+                }
+
+                if (trimmedLine.startsWith('###### ')) { htmlContent += `<h6>${applyInlineFormatting(trimmedLine.substring(7))}</h6>`; }
+                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; }
+                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; }
+                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; }
+                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; }
+                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; }
+                else if (trimmedLine === '---' || trimmedLine === '***' || trimmedLine === '___') {
+                    if (!inTable) htmlContent += '<hr>'; 
+                }
+                else if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
+                    if (inList !== 'ul') {
+                        if (inList) htmlContent += `</${inList}>`;
+                        htmlContent += '<ul>';
+                        inList = 'ul';
+                    }
+                    htmlContent += `<li>${applyInlineFormatting(trimmedLine.substring(2))}</li>`;
+                }
+                else if (trimmedLine.match(/^\d+\.\s/)) {
+                    if (inList !== 'ol') {
+                        if (inList) htmlContent += `</${inList}>`;
+                        htmlContent += '<ol>';
+                        inList = 'ol';
+                    }
+                    htmlContent += `<li>${applyInlineFormatting(trimmedLine.replace(/^\d+\.\s/, ''))}</li>`;
+                }
+                else {
+                    if (inList) {
+                        htmlContent += `</${inList}>`;
+                        inList = null;
+                    }
+                    if (trimmedLine !== '') {
+                        htmlContent += `<p>${applyInlineFormatting(trimmedLine)}</p>`;
+                    }
+                }
+            });
+
+            if (inList) htmlContent += `</${inList}>`;
+            if (inTable) htmlContent += '</table>'; 
+
+            contentDiv.innerHTML = htmlContent;
+            messageElement.appendChild(contentDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function applyInlineFormatting(text) {
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            text = text.replace(/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/g, '<em>$1</em>'); 
+            text = text.replace(/(?<!_)\_(?!\s|_)(.*?)(?<!\s|_)\_(?!_)/g, '<em>$1</em>');     
+            text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            return text;
+        }
+    </script>
+
+</body>
+</html>
