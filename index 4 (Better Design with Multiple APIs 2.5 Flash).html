@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحضير براعة باستخدام ادوات الذكاءاالاصطناعي عدنان الاكحلي</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4A90E2, #3A7BC8);
+            color: white;
+            padding: 20px 30px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2em;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            padding: 25px;
+            gap: 25px;
+        }
+
+        .sidebar {
+            width: 320px;
+            min-width: 300px;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar h2 {
+            font-size: 1.6em;
+            color: #3A7BC8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 15px;
+        }
+
+        .sidebar label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .sidebar input[type="text"],
+        .sidebar input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .sidebar input[type="text"]:focus,
+        .sidebar input[type="number"]:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            outline: none;
+        }
+
+        .api-key-info {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 95%;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 20px;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background-color: #dcf8c6;
+            color: #333;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-message {
+            border-color: #333;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .ai-message-content h1,
+        .ai-message-content h2,
+        .ai-message-content h3,
+        .ai-message-content h4,
+        .ai-message-content h5,
+        .ai-message-content h6 {
+            color: #3A7BC8;
+            margin-top: 18px;
+            margin-bottom: 10px;
+        }
+        .ai-message-content h1 { font-size: 1.6em; }
+        .ai-message-content h2 { font-size: 1.4em; }
+        .ai-message-content h3 { font-size: 1.2em; }
+        .ai-message-content p {
+            margin-bottom: 12px;
+        }
+        .ai-message-content ul,
+        .ai-message-content ol {
+            margin-left: 30px;
+            margin-bottom: 12px;
+        }
+        .ai-message-content li {
+            margin-bottom: 6px;
+        }
+        .ai-message-content strong {
+            font-weight: 700;
+        }
+        .ai-message-content em {
+            font-style: italic;
+        }
+        .ai-message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 0.95em;
+        }
+        .ai-message-content th,
+        .ai-message-content td {
+            border: 1px solid #dcdcdc;
+            padding: 10px;
+            text-align: right;
+        }
+        .ai-message-content th {
+            background-color: #f2f6fc;
+            font-weight: bold;
+            color: #4A90E2;
+        }
+        .ai-message-content td > p {
+            margin-bottom: 0;
+        }
+
+        .ai-message .loading-dots span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 3px;
+            background-color: #888;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .ai-message .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .ai-message .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
+        }
+
+        .chat-input-area button {
+            background: linear-gradient(135deg, #4A90E2, #3A7BC8);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chat-input-area button:disabled {
+            background: #a0c7ef;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .chat-input-area button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #3A7BC8, #4A90E2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .initial-placeholder {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b0b0b0;
+            font-size: 1.3em;
+            text-align: center;
+            padding: 25px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-bottom: 25px;
+                max-height: 45vh;
+            }
+            .chat-area {
+                height: 55vh;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+            .container {
+                padding: 15px;
+                gap: 15px;
+            }
+            .sidebar, .chat-area {
+                padding: 20px;
+            }
+            .chat-messages {
+                padding: 20px;
+            }
+            .chat-input-area {
+                padding: 15px;
+            }
+            .chat-input-area button {
+                min-height: 45px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body dir="rtl">
+
+    <header>
+        <h1>تحضير براعة للتعلم النشط باستخدام ادوات الذكاء الاصطناعي عدنان الاكحلي</h1>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>إعدادات الدرس</h2>
+            <form id="lessonDetailsForm">
+                <div>
+                    <label for="classGrade">الصف الدراسي:</label>
+                    <input type="text" id="classGrade" name="classGrade" placeholder="مثال: الصف الثالث الابتدائي" required>
+                </div>
+                <div>
+                    <label for="subject">المادة:</label>
+                    <input type="text" id="subject" name="subject" placeholder="مثال: اللغة العربية" required>
+                </div>
+                <div>
+                    <label for="lessonName">عنوان/موضوع الدرس:</label>
+                    <input type="text" id="lessonName" name="lessonName" placeholder="مثال: الأعداد ١، ٢، ٣" required>
+                </div>
+            </form>
+            <div>
+                <form id="chatForm" class="chat-input-area">
+                    <button type="submit" id="sendButton">إرسال</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="initial-placeholder">
+                    املأ تفاصيل الدرس في الشريط الجانبي، ثم اضغط على زر "إرسال" لإنشاء خطة الدرس.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- CONFIGURATION: REPLACE WITH YOUR ACTUAL GEMINI API KEY ---
+        // IMPORTANT! Replace the placeholder string below with your actual Gemini API Key.
+        // For example, if your key is "ABC123XYZ", the line should look like:
+        // const API_KEY = "ABC123XYZ";
+       
+       
+        const API_KEYS = [
+            "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc",
+            "AIzaSyD1svR63zy441xYElv_YSb386BdrGjFJA8"
+        ];
+
+        
+        // --- END CONFIGURATION ---
+
+        const AI_INSTRUCTIONS = `
+        You are an expert curriculum designer AI specializing in creating detailed lesson plans for teachers, particularly in Arabic.
+        Your task is to generate a comprehensive and practical lesson plan based on the user's request (class grade, subject, lesson topic, and specific requirements).
+
+        **Output Format:**
+*   Provide ONLY the lesson plan content, formatted in Arabic.
+*   Do NOT include any conversational introductory or concluding phrases like "Here is your lesson plan:", "Certainly!", or "I hope this helps!".
+*   Format your response using Markdown-like syntax. Use headings (#, ##, ###), bullet points (* or -), bold (**text**), and italics (*text*). Tables should be formatted using Markdown table syntax (as shown in the example).
+
+        **Lesson Plan Structure (Barā‘ah Model - نموذج براعة):**
+        The lesson plan should generally include the following sections, adapted as needed for the specific request. Pay close attention to the structure in the example:
+        1.  **عنوان الدرس:** (Derived from user input)
+        2.  **الصف:** (Derived from user input)
+        3.  **المادة:** (Derived from user input)
+        4.  **الزمن الكلي المقترح:** (If specified by user, otherwise suggest a common duration like 45-60 minutes and break it down per activity)
+        5.  **الأهداف التعليمية/السلوكية:** (What students will know or be able to do. Use action verbs, e.g., "أن يُميز الطالب...", "أن يَصف الطالب...")
+        6.  **المواد والأدوات والوسائل التعليمية:** (List all necessary items, including technology, handouts, fixed resources like whiteboards, and variable resources like videos or specific objects.)
+        7.  **إجراءات سير الدرس (مع تحديد الزمن لكل نشاط):**
+            *   **التمهيد (Warm-up/Engagement):** How to start the lesson and capture student interest. Include introductory questions.
+            *   **الجدول التحضيري (Preparatory Table / Main Activities Table):** This is a key part. Present this as a Markdown table.
+            *   **الإغلاق (Wrap-up/Closure):** Summary, check for understanding, review activities, and possibly preview next lesson.
+        8.  **التقويم:** (How learning will be checked - formative and/or summative activities or questions).
+        9.  **مراعاة الفروق الفردية (Differentiation):** (Strategies for diverse learners, if applicable).
+        10. **أوراق عمل وأنشطة إثرائية/داعمة (Worksheets and Supporting/Enrichment Activities - Optional but good):** Suggest relevant worksheets or activities, possibly in a table format.
+        11. **ملاحظات أو الصعوبات المتوقعة (Notes or Anticipated Difficulties - Optional):** Any additional important notes for the teacher.
+
+        **VERY IMPORTANT EXAMPLE TO FOLLOW FOR STRUCTURE, DETAIL, AND STYLE (نموذج براعة للتعلم النشط):**
+
+        Below is an exemplary lesson plan for a lesson on "حرف الألف" (The letter Alif). Use this as a strong guide for how to structure the output, the level of detail expected in each section, and the Markdown formatting. The user will provide a different topic, grade, and subject. You need to adapt this example's structure to their new request.
+
+        --- EXAMPLE LESSON PLAN ---
+
+        ### 🟢 تحضير درس: حرف الألف
+
+        **المادة:** اللغة العربية
+        **الصف:** الأول
+        **نموذج التحضير:** براعة للتعلم النشط
+
+        ### 1. التمهيد
+
+        **سؤال تحفيزي:**
+        "من يعرف كلمة تبدأ بصوت (أ)؟ هل سمعتم صوت (أ) في كلمة أسد؟"
+
+        **وسائل:**
+        عرض صورة كبيرة لحرف الألف (أ) وصورة أسد أو أرنب.
+
+        **تفاعل:**
+        تشجيع الطلاب على ذكر كلمات يعرفونها تبدأ بحرف الألف.
+
+        **توضيح:**
+        تمييز شكل الحرف وصوته، والفرق بين "أ" و"ا"، والحديث عن أهمية تعلم الحروف في القراءة والكتابة.
+
+
+        ### 2. جدول التحضير
+
+        | **دور المتعلم** | **دور المعلم** | **الزمن** | **مصادر التعلم** | **صياغة الهدف (فعل مضارع)** | **المستوى** | **المجال** | **المحتوى** |
+        |---|---|---|---|---|---|---|---|
+        | يستمع ويشارك في المناقشة – يذكر كلمات فيها حرف الألف | الطريقة: العصف الذهني 🔹 طرح سؤال 🔹 تدوين كلمات تبدأ بـ(أ) 🔹 تأكيد الصحيحة 🔹 سؤال تقويمي: سَمِّ ثلاث كلمات تبدأ بحرف الألف | 7 دقائق | 🔹 ثابتة: السبورة، كتاب الحروف، الأقلام 🔹 متغيرة: صور (أسد، أرنب، أناناس) | يسمّي ثلاث كلمات تبدأ بحرف الألف | تذكر | معرفي | التمييز السمعي لحرف الألف |
+        | يلاحظ شكل الحرف – يرسمه في الهواء – يكتبه على الطاولة بإصبعه | الطريقة: الاستقراء 🔹 عرض الحرف على السبورة 🔹 تتبع الشكل بالأصبع 🔹 مناقشة موقعه في الكلمة 🔹 سؤال تقويمي: كيف نرسم حرف الألف؟ | 10 دقائق | 🔹 ثابتة: السبورة، قلم السبورة 🔹 متغيرة: بطاقات الحروف، فيديو قصير | يرسم شكل حرف الألف | فهم | معرفي | شكل حرف الألف |
+        | يفكر بكلمات – يتعاون مع زميل – يكوّن جملة قصيرة | الطريقة: فكر – زاوج – شارك 🔹 تفكير فردي 🔹 تبادل مع زميل 🔹 عرض على الصف 🔹 سؤال تقويمي: كوّن جملة تبدأ بحرف الألف | 6 دقائق | 🔹 ثابتة: السبورة 🔹 متغيرة: بطاقات كلمات | يكوّن جملة من ثلاث كلمات تبدأ بحرف الألف | تطبيق | معرفي | استخدام الحرف في جملة |
+        | يعمل في مجموعة – يلون الحرف – يزينه – يلصق صور كلمات عليه | الطريقة: خلية النحل التقويمية 🔹 توزيع أوراق عمل 🔹 نشاط تزيين الحرف 🔹 عرض الأعمال 🔹 سؤال تقويمي: ماذا وضعت داخل حرف الألف؟ | 8 دقائق | 🔹 ثابتة: أوراق عمل 🔹 متغيرة: ألوان، مجلات، مقص، غراء | يزيّن حرف الألف بصور من بيئته | ممارسة | مهاري | نشاط تلوين الحرف |
+        | يلوّن النموذج – يربط بين الحرف والكلمة – يتعرف عليه في كلمات جديدة | الطريقة: الخريطة الذهنية 🔹 عرض خريطة كلمات تبدأ بحرف الألف 🔹 تلوين الحرف في كل كلمة 🔹 سؤال تقويمي: لوّن حرف الألف في كل كلمة | 5 دقائق | 🔹 ثابتة: أوراق تلوين 🔹 متغيرة: خريطة كلمات، صور | يحدّد موضع حرف الألف في الكلمة | إتقان | مهاري | التمييز البصري للحرف |
+        | يعمل ضمن مجموعة – يجهز للإجابة – يشرح عند اختياره | الطريقة: الرؤوس المرقمة 🔹 تقسيم الطلاب 🔹 طرح سؤال 🔹 اختيار رقم للإجابة 🔹 سؤال تقويمي: أين سمعت حرف الألف في هذه الكلمة؟ | 6 دقائق | 🔹 ثابتة: السبورة 🔹 متغيرة: تسجيل صوتي، صور | يستمع ويحدّد موقع حرف الألف | تحليل | معرفي | التمييز السمعي والبصري |
+
+
+        ### 3. الإغلاق
+
+        **مراجعة شفهية:** شكل الحرف، صوته، كلمات تحتويه.
+
+        **سؤال ختامي:** "اذكر لي كلمة فيها (أ) سمعتها اليوم!"
+
+        عرض فيديو قصير فيه أغنية عن حرف الألف.
+
+        توجيه الطلاب لنشاط منزلي بسيط.
+
+        ### 4. الأنشطة الإثرائية
+
+        🔹 **نشاط استكشافي:**
+        البحث عن أشياء في البيت تبدأ بحرف الألف وتصويرها.
+
+        🔹 **لعبة تفاعلية:**
+        لعبة "أنا أقول وأنت تشير": يُقال "أرنب" والطفل يشير إلى الحرف (أ).
+
+        🔹 **مشروع منزلي:**
+        إنشاء "بطاقة الحرف" باستخدام مجلات وقص صور تبدأ بحرف الألف.
+
+        🔹 **نشاط فني:**
+        صنع مجسم حرف الألف باستخدام ورق ملون أو صلصال.
+
+        ### 5. الصعوبات المتوقعة
+
+        الخلط بين (أ، ا) أو نطق الحرف بشكل خاطئ.
+
+        صعوبة في رسم الحرف بخط اليد.
+
+        تشتت الانتباه بسبب ضعف التركيز.
+
+        قلة المفردات لدى بعض الطلاب.
+
+        --- END OF EXAMPLE LESSON PLAN ---
+
+        Now, based on the user's specific inputs for grade, subject, topic, and their detailed request, generate a new lesson plan in Arabic, following this structure and style.
+The user might provide input like:
+الصف "الأول الابتدائي"
+المادة "اللغة العربية"
+المحتوى الاساسي "تعريف الأعداد ١، ٢، ٣، شكلها، وكيفية كتابتها، وربطها بأشياء محسوسة"
+تحضير درس "الأعداد ١، ٢، ٣"
+
+Your generated lesson plan should take these inputs and the user's free-form request to create a new plan.
+        `;
+        const chatForm = document.getElementById('chatForm');
+        const chatMessages = document.getElementById('chatMessages');
+        const initialPlaceholder = document.querySelector('.initial-placeholder');
+        const sendButton = document.getElementById('sendButton');
+        
+        chatForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userMessageText = ""; 
+
+            const classGrade = document.getElementById('classGrade').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const lessonName = document.getElementById('lessonName').value.trim();
+            
+
+            if (!classGrade || !subject || !lessonName) {
+                alert('الرجاء ملء حقول الصف الدراسي، المادة، وعنوان الدرس.');
+                return;
+            }
+
+            if (initialPlaceholder) {
+                initialPlaceholder.style.display = 'none';
+            }
+
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+
+            const loadingMessageElement = appendMessage('', 'ai-message', true);
+            loadingMessageElement.innerHTML = '<div class="ai-message-content" style="text-align: center;"><p>جارٍ إنشاء خطة الدرس...</p><div class="loading-dots"><span></span><span></span><span></span></div></div>';
+
+            try {
+                const aiResponseText = await tryApiKeys(userMessageText, classGrade, subject, lessonName, AI_INSTRUCTIONS);
+                loadingMessageElement.innerHTML = ''; 
+                renderAIResponseAsHTML(aiResponseText, loadingMessageElement);
+            } catch (error) {
+                console.error('Error fetching AI response:', error);
+                loadingMessageElement.innerHTML = '';
+                renderAIResponseAsHTML(`خطأ: تعذر إنشاء خطة الدرس. ${error.message}`, loadingMessageElement, true);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.innerHTML = 'إرسال';
+            }
+        });
+
+        async function tryApiKeys(userPrompt, grade, subject, topic, instructions) {
+            let lastError = null;
+            for (const apiKey of API_KEYS) {
+                try {
+                    const response = await getAIResponse(userPrompt, grade, subject, topic, instructions, apiKey);
+                    return response; // Success
+                } catch (error) {
+                    console.warn(`API key starting with ${apiKey.substring(0, 8)}... failed.`, error);
+                    lastError = error;
+                }
+            }
+            // If all keys failed, throw the last error
+            throw new Error(`All API keys failed. Last error: ${lastError.message}`);
+        }
+
+        function appendMessage(textOrHtml, className, isHTML = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', className);
+            if (isHTML) {
+                messageElement.innerHTML = textOrHtml;
+            } else {
+                messageElement.textContent = textOrHtml;
+            }
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return messageElement;
+        }
+
+        async function getAIResponse(userPrompt, grade, subject, topic, instructions, apiKey) {
+            const AI_API_ENDPOINT_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash';
+            const AI_API_ENDPOINT = `${AI_API_ENDPOINT_BASE}:generateContent`;
+
+
+
+            const fullPrompt = `
+${instructions}
+
+CONTEXT FOR LESSON PLAN (provided by user via form fields):
+Class Grade: ${grade}
+Subject: ${subject}
+Lesson Topic/Title: ${topic}
+
+USER'S SPECIFIC REQUEST FOR THE LESSON PLAN (from chat input, if any):
+${userPrompt} 
+
+Generate the lesson plan in Arabic now based on all the above information and the detailed example provided in the instructions.
+Ensure the output is ONLY the lesson plan content, in Markdown, ready for rendering.
+`;
+            
+            const geminiRequestBody = {
+              "contents": [{"parts": [{"text": fullPrompt}]}],
+              "generationConfig": {
+                "temperature": 0.6,
+                "maxOutputTokens": 4096, 
+                "candidateCount": 1
+              },
+            };
+
+            console.log("Sending to Gemini AI. Review request body structure if issues arise.");
+
+            const response = await fetch(`${AI_API_ENDPOINT}?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(geminiRequestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                console.error("API Error Data:", errorData);
+                let errorMessage = `فشل طلب الواجهة البرمجية: ${response.status}`;
+                if (errorData && errorData.error && errorData.error.message) {
+                    errorMessage += ` - ${errorData.error.message}`;
+                } else if (errorData && errorData.message) { 
+                    errorMessage += ` - ${errorData.message}`;
+                } else {
+                    errorMessage += ` - ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
+            }
+
+            const data = await response.json();
+
+            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) {
+                 return data.candidates[0].content.parts[0].text.trim();
+            } else if (data.promptFeedback && data.promptFeedback.blockReason) {
+                 console.error("Prompt blocked by API:", data.promptFeedback);
+                 let blockDetail = "";
+                 if(data.promptFeedback.safetyRatings && data.promptFeedback.safetyRatings.length > 0){
+                    blockDetail = data.promptFeedback.safetyRatings.map(r => `${r.category}: ${r.probability}`).join(', ');
+                 }
+                 throw new Error(`تم حظر الطلب بواسطة الواجهة البرمجية بسبب "${data.promptFeedback.blockReason}". ${blockDetail ? 'التفاصيل: ' + blockDetail : ''}`);
+            }
+            else {
+                console.warn("AI response format not recognized or empty, dumping data:", data);
+                 if (data.error && data.error.message) { 
+                    throw new Error(`خطأ في استجابة الواجهة البرمجية: ${data.error.message}`);
+                }
+                throw new Error("تنسيق استجابة الذكاء الاصطناعي غير معروف أو فارغ. تحقق من وحدة التحكم للحصول على التفاصيل.");
+            }
+        }
+        
+        function renderAIResponseAsHTML(markdownText, messageElement, isError = false) {
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('ai-message-content');
+            contentDiv.setAttribute('dir', 'rtl'); 
+
+            if (isError) {
+                const p = document.createElement('p');
+                p.style.color = 'red';
+                p.textContent = markdownText;
+                contentDiv.appendChild(p);
+                messageElement.appendChild(contentDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return;
+            }
+
+            let htmlContent = '';
+            let inList = null; 
+            let inTable = false;
+            let tableHeaderParsed = false; 
+
+            const lines = markdownText.split('\n');
+
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+
+                if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
+                    if (!inTable) {
+                        htmlContent += '<table>';
+                        inTable = true;
+                        tableHeaderParsed = false; 
+                    }
+                    const cells = trimmedLine.slice(1, -1).split('|').map(cell => cell.trim());
+                    
+                    if (!tableHeaderParsed && cells.every(cell => cell.replace(/-/g, '').trim() === '')) {
+                        tableHeaderParsed = true; 
+                        return; 
+                    }
+
+                    htmlContent += '<tr>';
+                    cells.forEach((cell) => {
+                        const cellContent = applyInlineFormatting(cell); 
+                        if (!tableHeaderParsed) { 
+                            htmlContent += `<th>${cellContent}</th>`;
+                        } else { 
+                            htmlContent += `<td>${cellContent}</td>`;
+                        }
+                    });
+                    htmlContent += '</tr>';
+                    
+                    if (!tableHeaderParsed && !cells.every(cell => cell.replace(/-/g, '').trim() === '')) {
+                        // If this first row was not a separator, assume it was the header.
+                        // For subsequent rows to be <td>, tableHeaderParsed needs to be true.
+                        // However, the logic relies on *explicitly* finding the separator.
+                        // If no separator is found, all rows might become <th> if this isn't set.
+                        // This is a bit tricky; best practice is for AI to provide the separator.
+                        // For now, if AI doesn't provide separator, first row is <th>, subsequent are also <th>
+                        // unless we uncomment: tableHeaderParsed = true; 
+                        // But this means a single-row table without separator will have its single row as header.
+                        // The prompt strongly asks AI to follow example with separator.
+                    }
+                    return; 
+                } else if (inTable) { 
+                    htmlContent += '</table>';
+                    inTable = false;
+                    tableHeaderParsed = false; 
+                }
+
+                if (trimmedLine.startsWith('###### ')) { htmlContent += `<h6>${applyInlineFormatting(trimmedLine.substring(7))}</h6>`; }
+                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; }
+                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; }
+                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; }
+                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; }
+                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; }
+                else if (trimmedLine === '---' || trimmedLine === '***' || trimmedLine === '___') {
+                    if (!inTable) htmlContent += '<hr>'; 
+                }
+                else if (trimmedLine.startsWith('* ') || trimmedLine.startsWith('- ')) {
+                    if (inList !== 'ul') {
+                        if (inList) htmlContent += `</${inList}>`;
+                        htmlContent += '<ul>';
+                        inList = 'ul';
+                    }
+                    htmlContent += `<li>${applyInlineFormatting(trimmedLine.substring(2))}</li>`;
+                }
+                else if (trimmedLine.match(/^\d+\.\s/)) {
+                    if (inList !== 'ol') {
+                        if (inList) htmlContent += `</${inList}>`;
+                        htmlContent += '<ol>';
+                        inList = 'ol';
+                    }
+                    htmlContent += `<li>${applyInlineFormatting(trimmedLine.replace(/^\d+\.\s/, ''))}</li>`;
+                }
+                else {
+                    if (inList) {
+                        htmlContent += `</${inList}>`;
+                        inList = null;
+                    }
+                    if (trimmedLine !== '') {
+                        htmlContent += `<p>${applyInlineFormatting(trimmedLine)}</p>`;
+                    }
+                }
+            });
+
+            if (inList) htmlContent += `</${inList}>`;
+            if (inTable) htmlContent += '</table>'; 
+
+            contentDiv.innerHTML = htmlContent;
+            messageElement.appendChild(contentDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function applyInlineFormatting(text) {
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            text = text.replace(/(?<!\*)\*(?!\s|\*)(.*?)(?<!\s|\*)\*(?!\*)/g, '<em>$1</em>'); 
+            text = text.replace(/(?<!_)\_(?!\s|_)(.*?)(?<!\s|_)\_(?!_)/g, '<em>$1</em>');     
+            text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            return text;
+        }
+    </script>
+
+</body>
+</html>
