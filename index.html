@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f7f9fc;
             color: #333;
             display: flex;
             flex-direction: column;
@@ -23,97 +23,116 @@
         }
 
         header {
-            background-color: #4A90E2; /* Gemini-like blue */
+            background: linear-gradient(135deg, #4A90E2, #3A7BC8);
             color: white;
-            padding: 15px 25px;
+            padding: 20px 30px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         header h1 {
-            font-size: 1.8em;
-            font-weight: 500;
+            font-size: 2em;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
         .container {
             display: flex;
             flex-grow: 1;
             overflow: hidden;
-            padding: 20px;
-            gap: 20px;
+            padding: 25px;
+            gap: 25px;
         }
 
         .sidebar {
-            width: 300px;
-            min-width: 280px;
+            width: 320px;
+            min-width: 300px;
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
 
         .sidebar h2 {
-            font-size: 1.4em;
-            color: #4A90E2;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+            font-size: 1.6em;
+            color: #3A7BC8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 15px;
         }
 
         .sidebar label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
-            color: #555;
+            color: #444;
         }
 
         .sidebar input[type="text"],
         .sidebar input[type="number"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.95em;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .api-key-info {
-            font-size: 0.8em;
-            color: #777;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            border: 1px solid #eee;
+        .sidebar input[type="text"]:focus,
+        .sidebar input[type="number"]:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+            outline: none;
         }
 
+        .api-key-info {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
 
         .chat-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             overflow: hidden;
         }
 
         .chat-messages {
             flex-grow: 1;
-            padding: 20px;
+            padding: 25px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
 
         .message {
-            max-width: 95%; /* Allow AI messages to be wider for tables */
-            padding: 12px 18px;
-            margin-bottom: 10px;
-            border-radius: 18px;
+            max-width: 95%;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 20px;
             line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .user-message {
@@ -124,12 +143,16 @@
         }
 
         .ai-message {
-            background-color: #e9e9eb;
+            border-color: #333;
             color: #333;
             align-self: flex-start;
             border-bottom-left-radius: 5px;
         }
-        /* Styling for rendered HTML from AI */
+
+        .ai-message-content .chat-messages {
+            overflow-x: auto;
+        }
+
         .ai-message-content h1,
         .ai-message-content h2,
         .ai-message-content h3,
@@ -137,55 +160,54 @@
         .ai-message-content h5,
         .ai-message-content h6 {
             color: #3A7BC8;
-            margin-top: 15px;
-            margin-bottom: 8px;
-        }
-        .ai-message-content h1 { font-size: 1.5em; }
-        .ai-message-content h2 { font-size: 1.3em; }
-        .ai-message-content h3 { font-size: 1.15em; }
-        .ai-message-content p {
+            margin-top: 18px;
             margin-bottom: 10px;
+        }
+        .ai-message-content h1 { font-size: 1.6em; }
+        .ai-message-content h2 { font-size: 1.4em; }
+        .ai-message-content h3 { font-size: 1.2em; }
+        .ai-message-content p {
+            margin-bottom: 12px;
         }
         .ai-message-content ul,
         .ai-message-content ol {
-            margin-left: 25px;
-            margin-bottom: 10px;
+            margin-left: 30px;
+            margin-bottom: 12px;
         }
         .ai-message-content li {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         .ai-message-content strong {
-            font-weight: 600;
+            font-weight: 700;
         }
         .ai-message-content em {
             font-style: italic;
         }
         .ai-message-content table {
-            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
-            font-size: 0.9em;
+            margin-bottom: 18px;
+            font-size: 0.95em;
         }
         .ai-message-content th,
         .ai-message-content td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: right; /* Default to right for Arabic, can be overridden */
+            border: 1px solid #dcdcdc;
+            padding: 10px;
+            text-align: right;
         }
         .ai-message-content th {
-            background-color: #f2f2f2;
+            background-color: #f2f6fc;
             font-weight: bold;
             color: #4A90E2;
         }
-        .ai-message-content td > p { /* Reset margin for <p> inside <td> if any */
+        .ai-message-content td > p {
             margin-bottom: 0;
         }
-        /* Loading animation */
+
         .ai-message .loading-dots span {
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            margin: 0 2px;
+            width: 10px;
+            height: 10px;
+            margin: 0 3px;
             background-color: #888;
             border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
@@ -197,35 +219,39 @@
             40% { transform: scale(1.0); }
         }
 
-
         .chat-input-area {
             display: flex;
-            padding: 15px;
+            padding: 20px;
             border-top: 1px solid #e0e0e0;
             background-color: #f9f9f9;
         }
 
         .chat-input-area button {
-            background-color: #4A90E2;
+            background: linear-gradient(135deg, #4A90E2, #3A7BC8);
             color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 20px;
+            padding: 0 25px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-            min-height: 40px;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-grow: 1; /* Make button take available space */
+            flex-grow: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .chat-input-area button:disabled {
-            background-color: #a0c7ef;
+            background: #a0c7ef;
             cursor: not-allowed;
+            box-shadow: none;
         }
         .chat-input-area button:hover:not(:disabled) {
-            background-color: #3A7BC8;
+            background: linear-gradient(135deg, #3A7BC8, #4A90E2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
         }
 
         .initial-placeholder {
@@ -233,29 +259,54 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
-            font-size: 1.2em;
+            color: #b0b0b0;
+            font-size: 1.3em;
             text-align: center;
-            padding: 20px;
+            padding: 25px;
         }
 
         /* Responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .container {
                 flex-direction: column;
             }
             .sidebar {
                 width: 100%;
-                margin-bottom: 20px;
-                max-height: 40vh;
+                margin-bottom: 25px;
+                max-height: 45vh;
             }
             .chat-area {
-                height: 60vh;
+                height: 55vh;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+            .container {
+                padding: 15px;
+                gap: 15px;
+            }
+            .sidebar, .chat-area {
+                padding: 20px;
+            }
+            .chat-messages {
+                padding: 20px;
+            }
+            .chat-input-area {
+                padding: 15px;
+            }
+            .chat-input-area button {
+                min-height: 45px;
+                font-size: 1em;
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body dir="rtl"> <!-- Set overall direction to RTL for Arabic content -->
+<body dir="rtl">
 
     <header>
         <h1>تحضير براعة للتعلم النشط باستخدام ادوات الذكاء الاصطناعي عدنان الاكحلي</h1>
@@ -278,8 +329,11 @@
                     <input type="text" id="lessonName" name="lessonName" placeholder="مثال: الأعداد ١، ٢، ٣" required>
                 </div>
             </form>
-            <div class="api-key-info">
-                <p><strong>تنبيه:</strong> مفتاح الواجهة البرمجية (API Key) مُضمَّن في الكود. هذا مناسب للاستخدام الشخصي المحلي فقط. لا تشارك هذا الملف مع مفتاحك الخاص.</p>
+            <div class="chat-input-area">
+                <button id="downloadPdfButton" type="button" style="background: linear-gradient(135deg, #67c23a, #5fad33); margin-left: 15px; flex-grow: 0.5;">تحميل كملف PDF</button>
+                <form id="chatForm" style="display: contents;">
+                    <button type="submit" id="sendButton">إرسال</button>
+                </form>
             </div>
         </aside>
 
@@ -289,9 +343,6 @@
                     املأ تفاصيل الدرس في الشريط الجانبي، ثم اضغط على زر "إرسال" لإنشاء خطة الدرس.
                 </div>
             </div>
-            <form id="chatForm" class="chat-input-area">
-                <button type="submit" id="sendButton">إرسال</button>
-            </form>
         </main>
     </div>
 
@@ -300,92 +351,120 @@
         // IMPORTANT! Replace the placeholder string below with your actual Gemini API Key.
         // For example, if your key is "ABC123XYZ", the line should look like:
         // const API_KEY = "ABC123XYZ";
-        const API_KEY = "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc"; // <--- REPLACE THIS VALUE!
+       
+       
+        const API_KEYS = [
+    "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc",
+    "AIzaSyAIEbybcADsQF52oTRNN14sYZXRmR8aOkc",
+    "AIzaSyAUKKf90shzM9RCgX8JFGEBmWCGuuBeKkM",
+    "AIzaSyCsqGx0kXOtqyNqBatDEG20GekF-2f9NNw"
+        ];
+
+        
         // --- END CONFIGURATION ---
 
         const AI_INSTRUCTIONS = `
-You are an expert curriculum designer AI specializing in creating detailed lesson plans for teachers, particularly in Arabic.
-Your task is to generate a comprehensive and practical lesson plan based on the user's request (class grade, subject, lesson topic, and specific requirements).
+        You are an expert curriculum designer AI specializing in creating detailed lesson plans for teachers, particularly in Arabic.
+        Your task is to generate a comprehensive and practical lesson plan based on the user's request (class grade, subject, lesson topic, and specific requirements).
 
-**Output Format:**
+        **Output Format:**
 *   Provide ONLY the lesson plan content, formatted in Arabic.
 *   Do NOT include any conversational introductory or concluding phrases like "Here is your lesson plan:", "Certainly!", or "I hope this helps!".
 *   Format your response using Markdown-like syntax. Use headings (#, ##, ###), bullet points (* or -), bold (**text**), and italics (*text*). Tables should be formatted using Markdown table syntax (as shown in the example).
 
-**Lesson Plan Structure (Barā‘ah Model - نموذج براعة):**
-The lesson plan should generally include the following sections, adapted as needed for the specific request. Pay close attention to the structure and column order in the "الجدول التحضيري" of the example:
-1.  **عنوان الدرس:** (Derived from user input)
-2.  **الصف:** (Derived from user input)
-3.  **المادة:** (Derived from user input)
-4.  **الزمن الكلي المقترح:** (If specified by user, otherwise suggest a common duration like 45-60 minutes and break it down per activity)
-5.  **الأهداف التعليمية/السلوكية:** (What students will know or be able to do. Use action verbs, e.g., "أن يُميز الطالب...", "أن يَصف الطالب...")
-6.  **المواد والأدوات والوسائل التعليمية:** (List all necessary items, including technology, handouts, fixed resources like whiteboards, and variable resources like videos or specific objects.)
-7.  **إجراءات سير الدرس (مع تحديد الزمن لكل نشاط):**
-    *   **التمهيد (Warm-up/Engagement):** How to start the lesson and capture student interest. Include introductory questions.
-    *   **الجدول التحضيري (Preparatory Table / Main Activities Table):** This is a key part. Present this as a Markdown table with columns in this specific order: المحتوى (Content), المجال (Domain), المستوى (Level), صياغة الهدف (Objective Formulation), مصادر التعلم (Learning Resources), الزمن (Time), دور المعلم (Teacher's Role), دور المتعلم (Student's Role).
-    *   **الإغلاق (Wrap-up/Closure):** Summary, check for understanding, review activities, and possibly preview next lesson.
-8.  **التقويم:** (How learning will be checked - formative and/or summative activities or questions).
-9.  **مراعاة الفروق الفردية (Differentiation):** (Strategies for diverse learners, if applicable).
-10. **أوراق عمل وأنشطة إثرائية/داعمة (Worksheets and Supporting/Enrichment Activities - Optional but good):** Suggest relevant worksheets or activities, possibly in a table format.
-11. **ملاحظات (Notes - Optional):** Any additional important notes for the teacher.
+        **Lesson Plan Structure (Barā‘ah Model - نموذج براعة):**
+        The lesson plan should generally include the following sections, adapted as needed for the specific request. Pay close attention to the structure in the example:
+        1.  **عنوان الدرس:** (Derived from user input)
+        2.  **الصف:** (Derived from user input)
+        3.  **المادة:** (Derived from user input)
+        4.  **الزمن الكلي المقترح:** (If specified by user, otherwise suggest a common duration like 45-60 minutes and break it down per activity)
+        5.  **الأهداف التعليمية/السلوكية:** (What students will know or be able to do. Use action verbs, e.g., "أن يُميز الطالب...", "أن يَصف الطالب...")
+        6.  **المواد والأدوات والوسائل التعليمية:** (List all necessary items, including technology, handouts, fixed resources like whiteboards, and variable resources like videos or specific objects.)
+        7.  **إجراءات سير الدرس (مع تحديد الزمن لكل نشاط):**
+            *   **التمهيد (Warm-up/Engagement):** How to start the lesson and capture student interest. Include introductory questions.
+            *   **الجدول التحضيري (Preparatory Table / Main Activities Table):** This is a key part. Present this as a Markdown table.
+            *   **الإغلاق (Wrap-up/Closure):** Summary, check for understanding, review activities, and possibly preview next lesson.
+        8.  **التقويم:** (How learning will be checked - formative and/or summative activities or questions).
+        9.  **مراعاة الفروق الفردية (Differentiation):** (Strategies for diverse learners, if applicable).
+        10. **أوراق عمل وأنشطة إثرائية/داعمة (Worksheets and Supporting/Enrichment Activities - Optional but good):** Suggest relevant worksheets or activities, possibly in a table format.
+        11. **ملاحظات أو الصعوبات المتوقعة (Notes or Anticipated Difficulties - Optional):** Any additional important notes for the teacher.
 
-**VERY IMPORTANT EXAMPLE TO FOLLOW FOR STRUCTURE, DETAIL, AND STYLE (نموذج براعة مقلوب - Flipped Barā‘ah Model):**
+        **VERY IMPORTANT EXAMPLE TO FOLLOW FOR STRUCTURE, DETAIL, AND STYLE (نموذج براعة للتعلم النشط):**
 
-Below is an exemplary lesson plan for a lesson on "الحمام" (Pigeons). Use this as a strong guide for how to structure the output, the level of detail expected in each section, and the Markdown formatting, especially for the "الجدول التحضيري". The user will provide a different topic, grade, and subject. You need to adapt this example's structure to their new request.
+        Below is an exemplary lesson plan for a lesson on "حرف الألف" (The letter Alif). Use this as a strong guide for how to structure the output, the level of detail expected in each section, and the Markdown formatting. The user will provide a different topic, grade, and subject. You need to adapt this example's structure to their new request.
 
---- EXAMPLE LESSON PLAN ---
+        --- EXAMPLE LESSON PLAN ---
 
-### **درس: الحمام**
+        ### 🟢 تحضير درس: حرف الألف
 
-### **التمهيد (5 دقائق):**
-- **عرض فيديو قصير** أو صورة ملونة لطائر الحمام.
-- **الأسئلة التمهيدية:**
-  - "هل رأيتم هذا الطائر من قبل؟ ماذا يسمى؟ ماذا تعرفون عنه؟"
-  - "هل تريدون معرفة المزيد عن الحمام؟" (نقل الطلاب إلى محتوى الدرس).
+        **المادة:** اللغة العربية
+        **الصف:** الأول
+        **نموذج التحضير:** براعة للتعلم النشط
 
-### **الجدول التحضيري (8 أعمدة × 4 صفوف)**
-*   **عكس الأعمدة:**
-    *   يبدأ الجدول بـ **"المحتوى"** كأول عمود (بدلًا من "دور المتعلم") لينتقل تركيز التخطيط من **دور الطالب** إلى **المحتوى التعليمي** أولًا، ثم يصل إلى الأدوار.
-*   **التسلسل المنطقي:**
-    *   أصبح التسلسل: **المحتوى → المجال → المستوى → الهدف → المصادر → الزمن → دور المعلم → دور المتعلم**، مما يُسهل على المعلم الربط بين المحتوى والأدوات قبل التخطيط للأنشطة.
-*   **وضوح الرؤية:**
-    *   يرى المعلم المحتوى والأهداف أولًا في الجدول، مما يساعده على اختيار الاستراتيجيات المناسبة (مثل: إذا كان المحتوى تحليليًّا، سيختار أسئلة نقدية).
+        ### 1. التمهيد
 
-| **دور المتعلم**       | **دور المعلم**                          | **الزمن** | **مصادر التعلم**                        | **صياغة الهدف**                              | **المستوى** | **المجال**  | **المحتوى**                                                                 |
-|-------------------------|------------------------------------------|-----------|------------------------------------------|-----------------------------------------------|-------------|-------------|-----------------------------------------------------------------------------|
-| يستمع – يشاهد – يسأل   | استخدام أسلوب الاستكشاف – طرح أسئلة مفتوحة | 8 د       | ثابتة: سبورة – كتاب <br> متغيرة: فيديو – صور | أن يُميز الطالب شكل طائر الحمام وأماكن تواجده | فهم         | معرفي      | المفاهيم: شكل الحمام – البيئة التي يعيش فيها – غذاؤه                      |
-| يشارك – يلاحظ – يناقش  | استخدام التعلم التعاوني – تنظيم مجموعات  | 10 د      | ثابتة: سبورة – كتاب <br> متغيرة: بطاقات – مجسم | أن يَصف الطالب خصائص الحمام وصفاته الفيزيائية | تطبيق      | مهاري      | الممارسة: مقارنة الحمام بطيور أخرى – وصف أجزائه (رأس، جناح، ريش...)       |
-| يفكر – يعبر – يعيد الصياغة | استخدام المناقشة الجماعية – تحفيز التفكير | 7 د       | ثابتة: سبورة – دفتر <br> متغيرة: رسم بياني – بطاقات | أن يُعبر الطالب عن أهمية الحمام في البيئة والحياة | تحليل      | وجداني     | التحليل: دور الحمام في الطبيعة – استخداماته للإنسان                       |
-| يُصنف – يختار – يُقيّم  | استخدام التعلم باللعب – تقويم أدائي       | 5 د       | ثابتة: بطاقات – سبورة <br> متغيرة: لعبة تصنيف | أن يُصنف الطالب الحمام ككائن حي فقاري يعيش في بيئات مختلفة | تقييم      | معرفي      | التمييز: الكائنات الحية – الفقاريات – الطيور                                |
+        **سؤال تحفيزي:**
+        "من يعرف كلمة تبدأ بصوت (أ)؟ هل سمعتم صوت (أ) في كلمة أسد؟"
 
-### **الإغلاق (10 دقائق):**
-1.  **مراجعة سريعة:**
-    - سؤال شفهي: "ما الذي تعلمته عن الحمام اليوم؟"
-2.  **نشاط جسمي:**
-    - تقليد حركة الحمام بالطيران باستخدام الأذرع.
-3.  **لعبة "صح أم خطأ":**
-    - جمل مثل:
-      - الحمام من الزواحف. (✖)
-      - للحمام جناحان وريش. (✔)
-      - الحمام يعيش تحت الماء. (✖)
-    - رفع بطاقات "صح" أو "خطأ".
+        **وسائل:**
+        عرض صورة كبيرة لحرف الألف (أ) وصورة أسد أو أرنب.
 
-### **أوراق عمل وأنشطة داعمة:**
-| **النشاط**                  | **التفاصيل**                                                                 |
-|-----------------------------|------------------------------------------------------------------------------|
-| **ورقة عمل 1:** صل الصورة بالكلمة | صور (حمام، سمك، قط، حمامة) مع كلمات مطابقة.                                |
-| **ورقة عمل 2:** أكتب جملة   | صورة حمامة مع جملة مثل: "الحمامة تطير في السماء."                          |
-| **ورقة عمل 3:** ضع دائرة    | صور (حمامة، سيارة، طائرة، عصفور) – وضع دائرة على الكائن الحي الطائر.       |
-| **نشاط جماعي:** لعبة التصنيف | بطاقات صور (طيور، حيوانات، أشياء) – تصنيف الصور التي تمثل "طيورًا".        |
+        **تفاعل:**
+        تشجيع الطلاب على ذكر كلمات يعرفونها تبدأ بحرف الألف.
 
-**ملاحظات:**
-- تعزيز التفاعل عبر الأنشطة الحركية والمرئية.
-- مراعاة الفروق الفردية بتقديم أنشطة متنوعة (سمعية، بصرية، حركية).
-- استخدام التعلم باللعب لترسيخ المفاهيم العلمية (مثل لعبة التصنيف).
+        **توضيح:**
+        تمييز شكل الحرف وصوته، والفرق بين "أ" و"ا"، والحديث عن أهمية تعلم الحروف في القراءة والكتابة.
 
---- END OF EXAMPLE LESSON PLAN ---
 
-Now, based on the user's specific inputs for grade, subject, topic, and their detailed request, generate a new lesson plan in Arabic, following this structure and style.
+        ### 2. جدول التحضير
+
+        | **دور المتعلم** | **دور المعلم** | **الزمن** | **مصادر التعلم** | **صياغة الهدف (فعل مضارع)** | **المستوى** | **المجال** | **المحتوى** |
+        |---|---|---|---|---|---|---|---|
+        | يستمع ويشارك في المناقشة – يذكر كلمات فيها حرف الألف | الطريقة: العصف الذهني 🔹 طرح سؤال 🔹 تدوين كلمات تبدأ بـ(أ) 🔹 تأكيد الصحيحة 🔹 سؤال تقويمي: سَمِّ ثلاث كلمات تبدأ بحرف الألف | 7 دقائق | 🔹 ثابتة: السبورة، كتاب الحروف، الأقلام 🔹 متغيرة: صور (أسد، أرنب، أناناس) | يسمّي ثلاث كلمات تبدأ بحرف الألف | تذكر | معرفي | التمييز السمعي لحرف الألف |
+        | يلاحظ شكل الحرف – يرسمه في الهواء – يكتبه على الطاولة بإصبعه | الطريقة: الاستقراء 🔹 عرض الحرف على السبورة 🔹 تتبع الشكل بالأصبع 🔹 مناقشة موقعه في الكلمة 🔹 سؤال تقويمي: كيف نرسم حرف الألف؟ | 10 دقائق | 🔹 ثابتة: السبورة، قلم السبورة 🔹 متغيرة: بطاقات الحروف، فيديو قصير | يرسم شكل حرف الألف | فهم | معرفي | شكل حرف الألف |
+        | يفكر بكلمات – يتعاون مع زميل – يكوّن جملة قصيرة | الطريقة: فكر – زاوج – شارك 🔹 تفكير فردي 🔹 تبادل مع زميل 🔹 عرض على الصف 🔹 سؤال تقويمي: كوّن جملة تبدأ بحرف الألف | 6 دقائق | 🔹 ثابتة: السبورة 🔹 متغيرة: بطاقات كلمات | يكوّن جملة من ثلاث كلمات تبدأ بحرف الألف | تطبيق | معرفي | استخدام الحرف في جملة |
+        | يعمل في مجموعة – يلون الحرف – يزينه – يلصق صور كلمات عليه | الطريقة: خلية النحل التقويمية 🔹 توزيع أوراق عمل 🔹 نشاط تزيين الحرف 🔹 عرض الأعمال 🔹 سؤال تقويمي: ماذا وضعت داخل حرف الألف؟ | 8 دقائق | 🔹 ثابتة: أوراق عمل 🔹 متغيرة: ألوان، مجلات، مقص، غراء | يزيّن حرف الألف بصور من بيئته | ممارسة | مهاري | نشاط تلوين الحرف |
+        | يلوّن النموذج – يربط بين الحرف والكلمة – يتعرف عليه في كلمات جديدة | الطريقة: الخريطة الذهنية 🔹 عرض خريطة كلمات تبدأ بحرف الألف 🔹 تلوين الحرف في كل كلمة 🔹 سؤال تقويمي: لوّن حرف الألف في كل كلمة | 5 دقائق | 🔹 ثابتة: أوراق تلوين 🔹 متغيرة: خريطة كلمات، صور | يحدّد موضع حرف الألف في الكلمة | إتقان | مهاري | التمييز البصري للحرف |
+        | يعمل ضمن مجموعة – يجهز للإجابة – يشرح عند اختياره | الطريقة: الرؤوس المرقمة 🔹 تقسيم الطلاب 🔹 طرح سؤال 🔹 اختيار رقم للإجابة 🔹 سؤال تقويمي: أين سمعت حرف الألف في هذه الكلمة؟ | 6 دقائق | 🔹 ثابتة: السبورة 🔹 متغيرة: تسجيل صوتي، صور | يستمع ويحدّد موقع حرف الألف | تحليل | معرفي | التمييز السمعي والبصري |
+
+
+        ### 3. الإغلاق
+
+        **مراجعة شفهية:** شكل الحرف، صوته، كلمات تحتويه.
+
+        **سؤال ختامي:** "اذكر لي كلمة فيها (أ) سمعتها اليوم!"
+
+        عرض فيديو قصير فيه أغنية عن حرف الألف.
+
+        توجيه الطلاب لنشاط منزلي بسيط.
+
+        ### 4. الأنشطة الإثرائية
+
+        🔹 **نشاط استكشافي:**
+        البحث عن أشياء في البيت تبدأ بحرف الألف وتصويرها.
+
+        🔹 **لعبة تفاعلية:**
+        لعبة "أنا أقول وأنت تشير": يُقال "أرنب" والطفل يشير إلى الحرف (أ).
+
+        🔹 **مشروع منزلي:**
+        إنشاء "بطاقة الحرف" باستخدام مجلات وقص صور تبدأ بحرف الألف.
+
+        🔹 **نشاط فني:**
+        صنع مجسم حرف الألف باستخدام ورق ملون أو صلصال.
+
+        ### 5. الصعوبات المتوقعة
+
+        الخلط بين (أ، ا) أو نطق الحرف بشكل خاطئ.
+
+        صعوبة في رسم الحرف بخط اليد.
+
+        تشتت الانتباه بسبب ضعف التركيز.
+
+        قلة المفردات لدى بعض الطلاب.
+
+        --- END OF EXAMPLE LESSON PLAN ---
+
+        Now, based on the user's specific inputs for grade, subject, topic, and their detailed request, generate a new lesson plan in Arabic, following this structure and style.
 The user might provide input like:
 الصف "الأول الابتدائي"
 المادة "اللغة العربية"
@@ -393,7 +472,7 @@ The user might provide input like:
 تحضير درس "الأعداد ١، ٢، ٣"
 
 Your generated lesson plan should take these inputs and the user's free-form request to create a new plan.
-`;
+        `;
 
         const chatForm = document.getElementById('chatForm');
         const chatMessages = document.getElementById('chatMessages');
@@ -425,7 +504,7 @@ Your generated lesson plan should take these inputs and the user's free-form req
             loadingMessageElement.innerHTML = '<div class="ai-message-content" style="text-align: center;"><p>جارٍ إنشاء خطة الدرس...</p><div class="loading-dots"><span></span><span></span><span></span></div></div>';
 
             try {
-                const aiResponseText = await getAIResponse(userMessageText, classGrade, subject, lessonName, AI_INSTRUCTIONS, API_KEY);
+                const aiResponseText = await tryApiKeys(userMessageText, classGrade, subject, lessonName, AI_INSTRUCTIONS);
                 loadingMessageElement.innerHTML = ''; 
                 renderAIResponseAsHTML(aiResponseText, loadingMessageElement);
             } catch (error) {
@@ -437,6 +516,21 @@ Your generated lesson plan should take these inputs and the user's free-form req
                 sendButton.innerHTML = 'إرسال';
             }
         });
+
+        async function tryApiKeys(userPrompt, grade, subject, topic, instructions) {
+            let lastError = null;
+            for (const apiKey of API_KEYS) {
+                try {
+                    const response = await getAIResponse(userPrompt, grade, subject, topic, instructions, apiKey);
+                    return response; // Success
+                } catch (error) {
+                    console.warn(`API key starting with ${apiKey.substring(0, 8)}... failed.`, error);
+                    lastError = error;
+                }
+            }
+            // If all keys failed, throw the last error
+            throw new Error(`All API keys failed. Last error: ${lastError.message}`);
+        }
 
         function appendMessage(textOrHtml, className, isHTML = false) {
             const messageElement = document.createElement('div');
@@ -452,7 +546,7 @@ Your generated lesson plan should take these inputs and the user's free-form req
         }
 
         async function getAIResponse(userPrompt, grade, subject, topic, instructions, apiKey) {
-            const AI_API_ENDPOINT_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest';
+            const AI_API_ENDPOINT_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash';
             const AI_API_ENDPOINT = `${AI_API_ENDPOINT_BASE}:generateContent`;
 
 
@@ -473,12 +567,10 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
 `;
             
             const geminiRequestBody = {
-              "contents": [{
-                "parts": [{"text": fullPrompt}]
-              }],
+              "contents": [{"parts": [{"text": fullPrompt}]}],
               "generationConfig": {
                 "temperature": 0.6,
-                "maxOutputTokens": 4096, 
+                "maxOutputTokens": 65535, 
                 "candidateCount": 1
               },
             };
@@ -555,7 +647,7 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
 
                 if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
                     if (!inTable) {
-                        htmlContent += '<table>';
+                        htmlContent += '<table dir="ltr">';
                         inTable = true;
                         tableHeaderParsed = false; 
                     }
@@ -595,12 +687,12 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
                     tableHeaderParsed = false; 
                 }
 
-                if (trimmedLine.startsWith('###### ')) { htmlContent += `<h6>${applyInlineFormatting(trimmedLine.substring(7))}</h6>`; }
-                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; }
-                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; }
-                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; }
-                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; }
-                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; }
+                if (trimmedLine.startsWith('###### ')) { htmlContent += `<h6>${applyInlineFormatting(trimmedLine.substring(7))}</h6>`; } 
+                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; } 
+                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; } 
+                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; } 
+                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; } 
+                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; } 
                 else if (trimmedLine === '---' || trimmedLine === '***' || trimmedLine === '___') {
                     if (!inTable) htmlContent += '<hr>'; 
                 }
@@ -649,6 +741,59 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
             return text;
         }
     </script>
+    <script>
+        // --- PDF EXPORT SCRIPT ---
+                // --- PDF EXPORT SCRIPT ---
+        document.getElementById('downloadPdfButton').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const aiMessages = document.querySelectorAll('.ai-message .ai-message-content');
+            const lastAiMessage = aiMessages[aiMessages.length - 1];
 
+            if (!lastAiMessage) {
+                alert('لا يوجد محتوى لتحميله. الرجاء إنشاء خطة الدرس أولاً.');
+                return;
+            }
+
+            const downloadButton = document.getElementById('downloadPdfButton');
+            const originalButtonText = downloadButton.innerHTML;
+            downloadButton.disabled = true;
+            downloadButton.innerHTML = 'جارٍ التحميل...';
+
+            try {
+                const canvas = await html2canvas(lastAiMessage, {
+                    scale: 2, // Higher scale for better quality
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+
+                const margin = 10; // 10mm margin
+                const pdfWidth = 210; // A4 width in mm
+                const imgWidth = pdfWidth - (margin * 2);
+                const imgHeight = (canvasHeight * imgWidth) / canvasWidth;
+                const pdfHeight = imgHeight + (margin * 2);
+
+                const pdf = new jsPDF({
+                    orientation: 'p',
+                    unit: 'mm',
+                    format: [pdfWidth, pdfHeight]
+                });
+
+                pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight, 'someAlias', 'FAST');
+                
+                pdf.save('خطة-الدرس.pdf');
+
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('حدث خطأ أثناء إنشاء ملف PDF.');
+            } finally {
+                downloadButton.disabled = false;
+                downloadButton.innerHTML = originalButtonText;
+            }
+        });
+    </script>
 </body>
 </html>
