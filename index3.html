@@ -149,6 +149,10 @@
             border-bottom-left-radius: 5px;
         }
 
+        .ai-message-content .chat-messages {
+            overflow-x: auto;
+        }
+
         .ai-message-content h1,
         .ai-message-content h2,
         .ai-message-content h3,
@@ -180,7 +184,6 @@
             font-style: italic;
         }
         .ai-message-content table {
-            width: 100%;
             border-collapse: collapse;
             margin-bottom: 18px;
             font-size: 0.95em;
@@ -351,8 +354,10 @@
        
        
         const API_KEYS = [
-            "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc",
-            "AIzaSyD1svR63zy441xYElv_YSb386BdrGjFJA8"
+    "AIzaSyBZM_2hvHgPPJUybUmOlKfQPvdUSyUfRTc",
+    "AIzaSyAIEbybcADsQF52oTRNN14sYZXRmR8aOkc",
+    "AIzaSyAUKKf90shzM9RCgX8JFGEBmWCGuuBeKkM",
+    "AIzaSyCsqGx0kXOtqyNqBatDEG20GekF-2f9NNw"
         ];
 
         
@@ -642,7 +647,7 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
 
                 if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
                     if (!inTable) {
-                        htmlContent += '<table>';
+                        htmlContent += '<table dir="ltr">';
                         inTable = true;
                         tableHeaderParsed = false; 
                     }
@@ -683,11 +688,11 @@ Ensure the output is ONLY the lesson plan content, in Markdown, ready for render
                 }
 
                 if (trimmedLine.startsWith('###### ')) { htmlContent += `<h6>${applyInlineFormatting(trimmedLine.substring(7))}</h6>`; } 
-                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; }
-                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; }
-                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; }
-                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; }
-                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; }
+                else if (trimmedLine.startsWith('##### ')) { htmlContent += `<h5>${applyInlineFormatting(trimmedLine.substring(6))}</h5>`; } 
+                else if (trimmedLine.startsWith('#### ')) { htmlContent += `<h4>${applyInlineFormatting(trimmedLine.substring(5))}</h4>`; } 
+                else if (trimmedLine.startsWith('### ')) { htmlContent += `<h3>${applyInlineFormatting(trimmedLine.substring(4))}</h3>`; } 
+                else if (trimmedLine.startsWith('## ')) { htmlContent += `<h2>${applyInlineFormatting(trimmedLine.substring(3))}</h2>`; } 
+                else if (trimmedLine.startsWith('# ')) { htmlContent += `<h1>${applyInlineFormatting(trimmedLine.substring(2))}</h1>`; } 
                 else if (trimmedLine === '---' || trimmedLine === '***' || trimmedLine === '___') {
                     if (!inTable) htmlContent += '<hr>'; 
                 }
