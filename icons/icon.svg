@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A90E2" />
+      <stop offset="100%" stop-color="#3A7BC8" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67C23A" />
+      <stop offset="100%" stop-color="#4E9E26" />
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  
+  <!-- Background Circle with Soft Shadow -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGrad)" filter="url(#dropShadow)" />
+  
+  <!-- Outer Glow Ring -->
+  <circle cx="256" cy="256" r="225" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.3" />
+  
+  <!-- Stylized Open Book & Brain/Lightbulb -->
+  <g transform="translate(128, 128)" filter="url(#dropShadow)">
+    <!-- Right Page -->
+    <path d="M128,210 C170,195 210,205 240,225 L240,75 C210,55 170,45 128,60 Z" fill="#ffffff" />
+    <!-- Left Page -->
+    <path d="M128,210 C86,195 46,205 16,225 L16,75 C46,55 86,45 128,60 Z" fill="#e0e8f5" />
+    
+    <!-- Spine -->
+    <path d="M120,60 L136,60 L136,215 L120,215 Z" fill="#3A7BC8" />
+    
+    <!-- Floating Brain / AI Lightbulb Core -->
+    <path d="M128,20 C100,20 85,40 85,60 C85,85 110,95 110,110 L146,110 C146,95 171,85 171,60 C171,40 156,20 128,20 Z" fill="url(#glowGrad)" />
+    
+    <!-- Bulb Base / Contact points -->
+    <rect x="116" y="114" width="24" height="6" rx="2" fill="#ffffff" />
+    <rect x="120" y="123" width="16" height="6" rx="2" fill="#ffffff" />
+    
+    <!-- Glowing rays -->
+    <line x1="128" y1="5" x2="128" y2="12" stroke="#67C23A" stroke-width="4" stroke-linecap="round" />
+    <line x1="75" y1="35" x2="83" y2="41" stroke="#67C23A" stroke-width="4" stroke-linecap="round" />
+    <line x1="181" y1="35" x2="173" y2="41" stroke="#67C23A" stroke-width="4" stroke-linecap="round" />
+  </g>
+</svg>

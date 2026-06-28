@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحضير براعة للتعلم النشط - المعلم عدنان الأكحلي</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3A7BC8">
+    <meta name="description" content="أداة ذكية لتحضير الدروس باستخدام الذكاء الاصطناعي">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="تحضير براعة">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>تحضير براعة للتعلم النشط-الاستاذ عدنان الاكحلي</h1>
+        <div class="status-container">
+            <span id="online-status-badge" class="badge badge-online">متصل بالإنترنت</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar Drawer Navigation and Configuration -->
+        <aside class="sidebar">
+            <div class="sidebar-tabs">
+                <button id="tab-new" class="tab-btn active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    تحضير جديد
+                </button>
+                <button id="tab-saved" class="tab-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    الدروس المحفوظة
+                    <span id="saved-count" class="tab-count">0</span>
+                </button>
+            </div>
+
+            <!-- Pane: New Lesson Configuration -->
+            <div id="pane-new" class="tab-content tab-panel active">
+                <h2>إعدادات الدرس</h2>
+                <form id="lessonDetailsForm">
+                    <div class="form-group">
+                        <label for="classGrade">الصف الدراسي:</label>
+                        <input type="text" id="classGrade" name="classGrade" placeholder="مثال: الصف الثالث الابتدائي"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">المادة:</label>
+                        <input type="text" id="subject" name="subject" placeholder="مثال: اللغة العربية" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonName">عنوان/موضوع الدرس:</label>
+                        <input type="text" id="lessonName" name="lessonName" placeholder="مثال: الأعداد ١، ٢، ٣"
+                            required>
+                    </div>
+                </form>
+
+                <div class="generate-actions-panel">
+                    <form id="chatForm" style="display: contents;">
+                        <button type="submit" id="sendButton" class="generate-btn">إرسال وإنشاء الخطة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pane: Saved Lessons Library (Offline accessible) -->
+            <div id="pane-saved" class="tab-content tab-panel">
+                <h2>المكتبة المحفوظة</h2>
+                <div id="savedLessonsList" class="saved-lessons-list">
+                    <!-- Loaded dynamically via js/app.js -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Document / Chat Workspace -->
+        <main class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="initial-placeholder">
+                    <div class="placeholder-icon"></div>
+                    <p>املأ تفاصيل الدرس في الشريط الجانبي، ثم اضغط على زر "إرسال وإنشاء الخطة" لإنشاء خطة الدرس.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- External script CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- App Modular Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/gemini.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
